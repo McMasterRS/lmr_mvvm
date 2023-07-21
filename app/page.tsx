@@ -1,7 +1,7 @@
 'use client';
 
 import styles from './page.module.css'
-import {List, ListItem, Stack, TextField} from "@mui/material";
+import {Box, List, ListItem, Stack, TextField} from "@mui/material";
 import styled from '@emotion/styled'
 import MuiButton, {ButtonProps} from '@mui/material/Button'
 import {useEffect, useState} from "react";
@@ -19,6 +19,12 @@ const CustomButton = styled(MuiButton, {shouldForwardProp: (prop) => prop !== "m
     },
     borderRadius: 28
 }));
+
+const imgStyle = {
+    paddingTop: '10px',
+    paddingBottom: '10px',
+    paddingRight: '30px',
+}
 
 interface Item {
     id: number,
@@ -71,10 +77,23 @@ export default function Home() {
         console.log(data);
     };
 
+
     return (
         <main className={styles.main}>
             <>
                 <Stack direction={"column"} spacing={2}>
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}>
+                        <Box
+                            component="img"
+                            alt="Shopping Cart Logo"
+                            src="/shopping-cart.png"
+                            style={imgStyle}
+                        />
+                    </div>
                     <TextField id="item-field" label="Item Name" variant="outlined" value={itemText} onChange={handleChange} />
                     <Stack direction={"row"} spacing={2}>
                         <CustomButton mainColor={"green"} variant={"contained"} onClick={handleAddItem}>
