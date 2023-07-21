@@ -15,6 +15,7 @@ const ItemViewModel = () => {
     const handleAddItem = useCallback(async () => {
         if (itemName) {
             await addItem(itemName)
+            setItemName('');
         }
     }, [addItem, itemName])
 
