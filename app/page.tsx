@@ -1,95 +1,100 @@
-import Image from 'next/image'
+'use client';
+
 import styles from './page.module.css'
+import {List, ListItem, Stack, TextField} from "@mui/material";
+import styled from '@emotion/styled'
+import MuiButton, {ButtonProps} from '@mui/material/Button'
+import {useEffect, useState} from "react";
+
+
+// Custom Button
+interface CustomButtonProps extends ButtonProps {
+    mainColor: string
+}
+
+const CustomButton = styled(MuiButton, {shouldForwardProp: (prop) => prop !== "mainColor"})<CustomButtonProps>(props => ({
+    backgroundColor: props.mainColor === 'green' ? '#77DD77' : '#FF6961',
+    ':hover': {
+        backgroundColor: props.mainColor === 'green' ? '#18A558':'#A80900',
+    },
+    borderRadius: 28
+}));
+
+interface Item {
+    id: number,
+    name: string
+}
 
 export default function Home() {
-  return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+    const [items, setItems] = useState<Item[]>([]);
+    const [itemText, setItemText] = useState<string>('');
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
 
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
+    // grabbing items from JSON file
+    useEffect(() => {
+        fetch("/api/items/fetch")
+            .then(res => res.text())
+            .then(text => { setItems(JSON.parse(text));
+            })
+    }, [items]);
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.value) {
+            setItemText(event.target.value);
+        }
+    }
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
+    const handleAddItem = async () => {
+        if (itemText) {
+            const response = await fetch('/api/items/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({itemText}
+                ),
+            });
+            const data = await response.json();
+            console.log(data);
+            setItemText('');
+        }
+    };
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+    const handleDeleteItem = async () => {
+        const response = await fetch('/api/items/delete', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        const data = await response.json();
+        console.log(data);
+    };
+
+    return (
+        <main className={styles.main}>
+            <>
+                <Stack direction={"column"} spacing={2}>
+                    <TextField id="item-field" label="Item Name" variant="outlined" value={itemText} onChange={handleChange} />
+                    <Stack direction={"row"} spacing={2}>
+                        <CustomButton mainColor={"green"} variant={"contained"} onClick={handleAddItem}>
+                            Add Item
+                        </CustomButton>
+                        <CustomButton mainColor={"red"} variant={"contained"} onClick={handleDeleteItem}>
+                            Delete Last Item
+                        </CustomButton>
+                    </Stack>
+                    <div>
+                        <h1>My Shopping List</h1>
+                        <List sx={{ listStyleType: 'disc', pl: 4 }}>
+                            {items.map((item: Item) => (
+                                <ListItem sx={{ display: 'list-item' }} key={item.id}> {item.name} </ListItem>
+                            ))}
+                        </List>
+                    </div>
+
+                </Stack>
+            </>
+        </main>
+    )
 }
