@@ -1,81 +1,48 @@
 'use client';
 
-import styles from './page.module.css'
-import {List, ListItem, Stack, TextField} from "@mui/material";
-import styled from '@emotion/styled'
-import MuiButton, {ButtonProps} from '@mui/material/Button'
-import {useEffect, useState} from "react";
+import styles from '../styles/page.module.css'
+import {Box, List, ListItem, Stack, TextField} from "@mui/material";
+import {CustomButton} from "@/components/CustomButton/CustomButton";
+import ItemViewModel from "@/viewmodels/ItemViewModel";
+import {Item} from "@/app/api/items/item";
 
-
-// Custom Button
-interface CustomButtonProps extends ButtonProps {
-    mainColor: string
-}
-
-const CustomButton = styled(MuiButton, {shouldForwardProp: (prop) => prop !== "mainColor"})<CustomButtonProps>(props => ({
-    backgroundColor: props.mainColor === 'green' ? '#77DD77' : '#FF6961',
-    ':hover': {
-        backgroundColor: props.mainColor === 'green' ? '#18A558':'#A80900',
-    },
-    borderRadius: 28
-}));
-
-interface Item {
-    id: number,
-    name: string
-}
 
 export default function Home() {
-    const [items, setItems] = useState<Item[]>([]);
-    const [itemText, setItemText] = useState<string>('');
+    const {
+        itemName,
+        items,
+        handleChange,
+        handleAddItem,
+        handleDeleteItem,
+    } = ItemViewModel();
 
-
-    // grabbing items from JSON file
-    useEffect(() => {
-        fetch("/api/items/fetch")
-            .then(res => res.text())
-            .then(text => { setItems(JSON.parse(text));
-            })
-    }, [items]);
-
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.value) {
-            setItemText(event.target.value);
-        }
+    const imgStyle = {
+        paddingTop: '10px',
+        paddingBottom: '10px',
+        paddingRight: '30px',
     }
-
-    const handleAddItem = async () => {
-        if (itemText) {
-            const response = await fetch('/api/items/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({itemText}
-                ),
-            });
-            const data = await response.json();
-            console.log(data);
-            setItemText('');
-        }
-    };
-
-    const handleDeleteItem = async () => {
-        const response = await fetch('/api/items/delete', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-        const data = await response.json();
-        console.log(data);
-    };
 
     return (
         <main className={styles.main}>
             <>
                 <Stack direction={"column"} spacing={2}>
-                    <TextField id="item-field" label="Item Name" variant="outlined" value={itemText} onChange={handleChange} />
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}>
+                        <Box
+                            sx={{
+                                height: '50%',
+                                width: '50%',
+                            }}
+                            component="img"
+                            alt="Shopping Cart Logo"
+                            src="/assets/shopping-cart.png"
+                            style={imgStyle}
+                        />
+                    </div>
+                    <TextField id="item-field" label="Item Name" variant="outlined" value={itemName} onChange={handleChange} />
                     <Stack direction={"row"} spacing={2}>
                         <CustomButton mainColor={"green"} variant={"contained"} onClick={handleAddItem}>
                             Add Item

@@ -8,5 +8,4 @@ export async function GET(request:Request, response: Response){
     const jsonData = await fsPromises.readFile(dataFilePath);
     const objectData = JSON.parse(jsonData.toString());
     return NextResponse.json(objectData)
-
 }
