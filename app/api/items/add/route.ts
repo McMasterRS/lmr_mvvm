@@ -17,7 +17,8 @@ export async function POST(request:Request, response: Response) {
         data.push(
             {
                 id: data.length + 1,
-                name: body.itemText
+                name: body.itemText,
+                price: Math.floor(Math.random() * (20 - 1 + 1)) + 1
             }
         )
 

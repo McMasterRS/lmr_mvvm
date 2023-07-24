@@ -1,12 +1,13 @@
 export interface Item {
     id: number,
-    name: string
+    name: string,
+    price: number
 }
 
 export const getAllItems = async (): Promise<Item[] | null> => {
     const response = await fetch('/api/items/fetch')
     if (!response.ok) {
-        throw new Error('Failed to get all articles')
+        throw new Error('Failed to get all items')
     }
     const data = await response.json()
     return data
