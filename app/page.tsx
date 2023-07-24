@@ -1,7 +1,7 @@
 'use client';
 
 import styles from './page.module.css'
-import {Box, List, ListItem, Stack, TextField} from "@mui/material";
+import {Box, Grid, List, ListItem, Stack, TextField} from "@mui/material";
 import styled from '@emotion/styled'
 import MuiButton, {ButtonProps} from '@mui/material/Button'
 import {useEffect, useState} from "react";
@@ -28,7 +28,8 @@ const imgStyle = {
 
 interface Item {
     id: number,
-    name: string
+    name: string,
+    price: number,
 }
 
 export default function Home() {
@@ -107,7 +108,16 @@ export default function Home() {
                         <h1>My Shopping List</h1>
                         <List sx={{ listStyleType: 'disc', pl: 4 }}>
                             {items.map((item: Item) => (
-                                <ListItem sx={{ display: 'list-item' }} key={item.id}> {item.name} </ListItem>
+                                <ListItem sx={{ display: 'list-item' }} key={item.id}>
+                                    <Grid container spacing={2}>
+                                        <Grid item xs={5}>
+                                            {item.name}
+                                        </Grid>
+                                        <Grid item xs={4}>
+                                            {"$" + item.price + " CAD"}
+                                        </Grid>
+                                    </Grid>
+                                </ListItem>
                             ))}
                         </List>
                     </div>
