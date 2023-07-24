@@ -1,7 +1,7 @@
 'use client';
 
 import styles from '../styles/page.module.css'
-import {Box, Grid, List, ListItem, Stack, TextField} from "@mui/material";
+import {Box, Grid, List, ListItem, Stack, TextField, Typography} from "@mui/material";
 import {CustomButton} from "@/components/CustomButton/CustomButton";
 import ItemViewModel from "@/viewmodels/ItemViewModel";
 import {Item} from "@/app/api/items/item";
@@ -52,7 +52,7 @@ export default function Home() {
                         </CustomButton>
                     </Stack>
                     <div>
-                        <h1>My Shopping List</h1>
+                        <Typography variant={"h1"}>My Shopping List</Typography>
                         <List sx={{ listStyleType: 'disc', pl: 4 }}>
                             {items.map((item: Item) => (
                                 <ListItem sx={{ display: 'list-item' }} key={item.id}>
